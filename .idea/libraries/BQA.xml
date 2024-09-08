@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="BQA">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/BQA.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

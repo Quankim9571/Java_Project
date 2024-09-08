@@ -8,9 +8,9 @@ public class Data implements AutoCloseable {
     private Connection connection;
 
     public Data() throws SQLException {
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=QLCHBQA;encrypt=true;trustServerCertificate=true";
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=StoreClothes;encrypt=true;trustServerCertificate=true";
         String user = "sa";
-        String password = "nkim5228";
+        String password = "hoanganhtuan123";
         connection = DriverManager.getConnection(url, user, password);
     }
 
