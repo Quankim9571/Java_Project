@@ -1,19 +1,24 @@
 package mainn;
 
-import classs.KhachHang;
-import interfacee.iKhachHang;
+import classs.Customers;
+import interfacee.iCustomers;
 import classs.DonHang;
 import java.util.Scanner;
 import database.Data;
 import interfacee.iDonHang;
+
+import java.sql.Date;
 import java.sql.SQLException;
 import classs.NhanVien;
 import interfacee.iNhanVien;
 import classs.Kho;
 import interfacee.iKho;
 import classs.SanPham;
+import classs.Suppliers;
 import interfacee.iSanPham;
+import interfacee.iSuppliers;
 import entity.DH;
+import entity.EntityCustomers;
 
 public class Main {
 
@@ -21,29 +26,31 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Data dataAccess = null;
         iDonHang idonHang = null;
-        iKhachHang ikhachHang = null;
+        iCustomers ikhachHang = null;
         iNhanVien inhanVien = null;
         iKho ikho = null;
         iSanPham isanPham = null;
-
+        iSuppliers isupplier = null;
         try {
             dataAccess = new Data();
             idonHang = new DonHang(dataAccess);
-            ikhachHang = new KhachHang(dataAccess);
+            ikhachHang = new Customers(dataAccess);
             inhanVien = new NhanVien(dataAccess);
             ikho = new Kho(dataAccess);
             isanPham = new SanPham(dataAccess);
-
+            isupplier = new Suppliers(dataAccess);
             while (true) {
                 System.out.println("1. Quản lý Đơn hàng");
                 System.out.println("2. Quản lý Khách hàng");
                 System.out.println("3. Quản lý Nhân viên");
                 System.out.println("4. Quản lý Sản phẩm");
                 System.out.println("5. Quản lý Kho");
-                System.out.println("6. Thoát");
+                System.out.println("6. Quản lý Nhà Cung Cấp");
+                System.out.println("7. Thoát");
 
+                System.out.print("Chọn chức năng: ");
                 int choice = scanner.nextInt();
-
+                
                 switch (choice) {
                     case 1:
                         QLDonHang(scanner, idonHang);
@@ -61,6 +68,9 @@ public class Main {
                         QLKho(scanner, ikho);
                         break;
                     case 6:
+                        QLNCC(scanner, isupplier);
+                        break;
+                    case 7:
                         System.out.println("Thoát chương trình.");
                         return;
                     default:
@@ -144,7 +154,8 @@ public class Main {
         }
     }
 
-    private static void QLKhachHang(Scanner scanner, iKhachHang ikhachHang) {
+    private static void QLKhachHang(Scanner scanner, iCustomers ikhachHang) {
+    	EntityCustomers etS = new EntityCustomers();
         while (true) {
             System.out.println("Chọn mục quản lý Khách hàng:");
             System.out.println("1. Xem khách hàng");
@@ -158,34 +169,41 @@ public class Main {
 
             switch (subChoice) {
                 case 1:
-                    ikhachHang.hienThiKhachHang();
+                    ikhachHang.showCustomer();
                     break;
                 case 2:
                     System.out.println("Nhập Tên khách hàng:");
-                    String khachhangName = scanner.nextLine();
-                    System.out.println("Nhập Thông tin liên hệ:");
-                    String thongtinlienhe = scanner.nextLine();
-                    System.out.println("Nhập Địa chỉ:");
-                    String diachi = scanner.nextLine();
-                    ikhachHang.themKhachHang(khachhangName, thongtinlienhe, diachi);
+                    etS.setFullName(scanner.nextLine());
+                    System.out.println("Nhập email:");
+                    etS.setEmail(scanner.nextLine());
+                    System.out.println("Nhập số điện thoại:");
+                    etS.setPhoneNumber(scanner.nextLine());
+                    System.out.println("Nhập địa chỉ:");
+                    etS.setAddress(scanner.nextLine());
+                    System.out.println("Nhập ngày sinh yy-mm-dd:");
+                    etS.setDateOfBirth(Date.valueOf(scanner.nextLine()));
+                    ikhachHang.addCustomer(etS.getFullName(), etS.getEmail(), etS.getPhoneNumber(), etS.getAddress(), etS.getDateOfBirth());
                     break;
                 case 3:
-                    System.out.println("Nhập KhachhangID:");
-                    int khachhangID = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    System.out.println("Nhập Tên khách hàng:");
-                    khachhangName = scanner.nextLine();
-                    System.out.println("Nhập Thông tin liên hệ:");
-                    thongtinlienhe = scanner.nextLine();
-                    System.out.println("Nhập Địa chỉ:");
-                    diachi = scanner.nextLine();
-                    ikhachHang.suaKhachHang(khachhangID, khachhangName, thongtinlienhe, diachi);
+                	System.out.println("Nhập id khách hàng:");
+                    etS.setCustomerID(scanner.nextInt());
+                	System.out.println("Nhập Tên khách hàng:");
+                	etS.setFullName(scanner.nextLine());
+                    System.out.println("Nhập email:");
+                    etS.setEmail(scanner.nextLine());
+                    System.out.println("Nhập số điện thoại:");
+                    etS.setPhoneNumber(scanner.nextLine());
+                    System.out.println("Nhập địa chỉ:");
+                    etS.setAddress(scanner.nextLine());
+                    System.out.println("Nhập ngày sinh yy-mm-dd:");
+                    etS.setDateOfBirth(Date.valueOf(scanner.nextLine()));
+                    ikhachHang.updateCustomer(etS.getCustomerID(), etS.getFullName(), etS.getEmail(), etS.getPhoneNumber(), etS.getAddress(), etS.getDateOfBirth());
                     break;
                 case 4:
                     System.out.println("Nhập KhachhangID:");
-                    khachhangID = scanner.nextInt();
+                    etS.setCustomerID(scanner.nextInt());
                     scanner.nextLine(); // Consume newline
-                    ikhachHang.xoaKhachHang(khachhangID);
+                    ikhachHang.deleteCustomer(etS.getCustomerID());
                     break;
                 case 5:
                     System.out.println("Quay lại menu chính.");
@@ -344,6 +362,62 @@ public class Main {
                     System.out.print("Nhập KhoID cần xóa: ");
                     int deleteKhoID = scanner.nextInt();
                     ikho.xoaKho(deleteKhoID);
+                    break;
+                case 5:
+                    System.out.println("Quay lại menu chính.");
+                    return;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
+            }
+        }
+    }
+    
+    private static void QLNCC(Scanner scanner, iSuppliers isupplier) {
+        while (true) {
+            System.out.println("Chọn mục quản lý Nhà Cung Cấp:");
+            System.out.println("1. Xem nhà cung cấp");
+            System.out.println("2. Thêm nhà cung cấp");
+            System.out.println("3. Sửa nhà cung cấp");
+            System.out.println("4. Xóa nhà cung cấp");
+            System.out.println("5. Quay lại menu chính");
+
+            int subChoice = scanner.nextInt();
+            scanner.nextLine();
+            switch (subChoice) {
+                case 1:
+                    isupplier.showSupplier();
+                    break;
+                case 2:
+					System.out.print("Nhập tên Nhà Cung Cấp: ");
+					String supplierName = scanner.nextLine();
+					
+					System.out.print("Nhập thông tin liên lạc: ");
+					String contactInfo = scanner.nextLine();
+					
+					System.out.print("Nhập địa chỉ: ");
+					String address = scanner.nextLine();
+					isupplier.addSupplier(supplierName, contactInfo, address);
+                    break;
+                case 3:
+					System.out.print("Nhập SupplierID cần sửa: ");
+					int supplierID = scanner.nextInt();
+
+					System.out.print("Nhập tên Nhà Cung Cấp cần sửa: ");
+					supplierName = scanner.nextLine();
+					scanner.nextLine();
+					
+					System.out.print("Nhập thông tin liên lạc cần sửa: ");
+					contactInfo = scanner.nextLine();
+					scanner.nextLine();
+					
+					System.out.print("Nhập địa chỉ cần sửa: ");
+					address = scanner.nextLine();
+					isupplier.updateSupplier(supplierID, supplierName, contactInfo, address);
+					break;
+                case 4:
+                    System.out.print("Nhập SupplerID cần xóa: ");
+                    supplierID = scanner.nextInt();
+                    isupplier.deleteSupplier(supplierID);
                     break;
                 case 5:
                     System.out.println("Quay lại menu chính.");
