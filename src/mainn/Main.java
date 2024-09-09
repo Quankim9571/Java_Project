@@ -1,6 +1,7 @@
 package mainn;
 
 import classs.Customers;
+import interfacee.iCategories;
 import interfacee.iCustomers;
 import classs.DonHang;
 import java.util.Scanner;
@@ -18,8 +19,9 @@ import classs.Suppliers;
 import interfacee.iSanPham;
 import interfacee.iSuppliers;
 import entity.DH;
+import entity.EntityCategories;
 import entity.EntityCustomers;
-
+import classs.Categories;
 public class Main {
 
     public static void main(String[] args) {
@@ -31,6 +33,7 @@ public class Main {
         iKho ikho = null;
         iSanPham isanPham = null;
         iSuppliers isupplier = null;
+        iCategories icategory = null;
         try {
             dataAccess = new Data();
             idonHang = new DonHang(dataAccess);
@@ -39,6 +42,7 @@ public class Main {
             ikho = new Kho(dataAccess);
             isanPham = new SanPham(dataAccess);
             isupplier = new Suppliers(dataAccess);
+            icategory = new Categories(dataAccess);
             while (true) {
                 System.out.println("1. Quản lý Đơn hàng");
                 System.out.println("2. Quản lý Khách hàng");
@@ -46,7 +50,8 @@ public class Main {
                 System.out.println("4. Quản lý Sản phẩm");
                 System.out.println("5. Quản lý Kho");
                 System.out.println("6. Quản lý Nhà Cung Cấp");
-                System.out.println("7. Thoát");
+                System.out.println("7. Quản lý Loại Hàng");
+                System.out.println("8. Thoát");
 
                 System.out.print("Chọn chức năng: ");
                 int choice = scanner.nextInt();
@@ -71,6 +76,9 @@ public class Main {
                         QLNCC(scanner, isupplier);
                         break;
                     case 7:
+                    	QLLH(scanner, icategory);
+                        return;
+                    case 8:
                         System.out.println("Thoát chương trình.");
                         return;
                     default:
@@ -427,4 +435,47 @@ public class Main {
             }
         }
     }
+    
+    private static void QLLH(Scanner scanner, iCategories icategory) {
+    	EntityCategories etC = new EntityCategories();
+    	 while (true) {
+             System.out.println("Chọn mục quản lý Loại Hàng:");
+             System.out.println("1. Xem loại hàng");
+             System.out.println("2. Thêm loại hàng");
+             System.out.println("3. Sửa loại hàng");
+             System.out.println("4. Xóa loại hàng");
+             int subChoice = scanner.nextInt();
+             scanner.nextLine();
+             switch (subChoice) {
+                 case 1:
+                     icategory.showCategory();
+                     break;
+                 case 2:
+ 					System.out.print("Nhập tên Loại Hàng: ");
+ 					etC.setCategoryName(scanner.nextLine());
+ 					icategory.addCategory(etC.getCategoryName());
+                     break;
+                 case 3:
+ 					System.out.print("Nhập CategoryID cần sửa: ");
+ 					etC.setCategoryID(scanner.nextInt());
+ 					scanner.nextLine();
+ 					System.out.print("Nhập tên Loại Hàng cần sửa: ");
+ 					etC.setCategoryName(scanner.nextLine());
+ 					
+ 					icategory.updateCategory(etC.getCategoryID(), etC.getCategoryName());
+ 					break;
+                 case 4:
+                     System.out.print("Nhập CategoryID cần xóa: ");
+                     etC.setCategoryID(scanner.nextInt());
+                     icategory.deleteCategory(etC.getCategoryID());
+                     break;
+                 case 5:
+                     System.out.println("Quay lại menu chính.");
+                     return;
+                 default:
+                     System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
+             }
+         }
+    }
+    
 }
