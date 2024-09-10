@@ -43,6 +43,7 @@ public class Customers implements iCustomers {
         	ps.setString(3, PhoneNumber);
         	ps.setString(4, Address);   
         	ps.setDate(5, DateOfBirth); 
+        	ps.setInt(6, CustomerID);
             ps.executeUpdate();
             System.out.println("Successfully updated customer!");
         } catch (SQLException e) {

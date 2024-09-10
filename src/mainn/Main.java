@@ -11,7 +11,11 @@ import interfacee.iDonHang;
 import java.sql.Date;
 import java.sql.SQLException;
 import classs.NhanVien;
+import classs.Order;
+import classs.Payment;
 import interfacee.iNhanVien;
+import interfacee.iOrder;
+import interfacee.iPayment;
 import classs.Kho;
 import interfacee.iKho;
 import classs.SanPham;
@@ -21,6 +25,8 @@ import interfacee.iSuppliers;
 import entity.DH;
 import entity.EntityCategories;
 import entity.EntityCustomers;
+import entity.EntityOrder;
+import entity.EntitySupplier;
 import classs.Categories;
 public class Main {
 
@@ -34,6 +40,8 @@ public class Main {
         iSanPham isanPham = null;
         iSuppliers isupplier = null;
         iCategories icategory = null;
+        iOrder iorder = null;
+        iPayment ipayment = null;
         try {
             dataAccess = new Data();
             idonHang = new DonHang(dataAccess);
@@ -43,6 +51,8 @@ public class Main {
             isanPham = new SanPham(dataAccess);
             isupplier = new Suppliers(dataAccess);
             icategory = new Categories(dataAccess);
+            iorder = new Order(dataAccess);
+            ipayment = new Payment(dataAccess);
             while (true) {
                 System.out.println("1. Quản lý Đơn hàng");
                 System.out.println("2. Quản lý Khách hàng");
@@ -51,7 +61,9 @@ public class Main {
                 System.out.println("5. Quản lý Kho");
                 System.out.println("6. Quản lý Nhà Cung Cấp");
                 System.out.println("7. Quản lý Loại Hàng");
-                System.out.println("8. Thoát");
+                System.out.println("8. Quản lý Đơn Hàng");
+                System.out.println("9. Quản lý Phương Thức Thanh Toán");
+                System.out.println("10. Thoát");
 
                 System.out.print("Chọn chức năng: ");
                 int choice = scanner.nextInt();
@@ -79,6 +91,9 @@ public class Main {
                     	QLLH(scanner, icategory);
                         return;
                     case 8:
+                    	QLDH(scanner, iorder);
+                        return;
+                    case 9:
                         System.out.println("Thoát chương trình.");
                         return;
                     default:
@@ -190,11 +205,17 @@ public class Main {
                     etS.setAddress(scanner.nextLine());
                     System.out.println("Nhập ngày sinh yy-mm-dd:");
                     etS.setDateOfBirth(Date.valueOf(scanner.nextLine()));
-                    ikhachHang.addCustomer(etS.getFullName(), etS.getEmail(), etS.getPhoneNumber(), etS.getAddress(), etS.getDateOfBirth());
+                    if(!etS.getFullName().isEmpty() && !etS.getEmail().isEmpty() && !etS.getPhoneNumber().isEmpty() && !etS.getAddress().isEmpty() && etS.getDateOfBirth() != null) {
+                    	ikhachHang.addCustomer(etS.getFullName(), etS.getEmail(), etS.getPhoneNumber(), etS.getAddress(), etS.getDateOfBirth());
+                    } else {
+                    	System.out.println("Không được để trống!");
+                    }
+                    
                     break;
                 case 3:
                 	System.out.println("Nhập id khách hàng:");
                     etS.setCustomerID(scanner.nextInt());
+                    scanner.nextLine();
                 	System.out.println("Nhập Tên khách hàng:");
                 	etS.setFullName(scanner.nextLine());
                     System.out.println("Nhập email:");
@@ -205,13 +226,20 @@ public class Main {
                     etS.setAddress(scanner.nextLine());
                     System.out.println("Nhập ngày sinh yy-mm-dd:");
                     etS.setDateOfBirth(Date.valueOf(scanner.nextLine()));
-                    ikhachHang.updateCustomer(etS.getCustomerID(), etS.getFullName(), etS.getEmail(), etS.getPhoneNumber(), etS.getAddress(), etS.getDateOfBirth());
+                    if( etS.getCustomerID() != 0 && !etS.getFullName().isEmpty() && !etS.getEmail().isEmpty() && !etS.getPhoneNumber().isEmpty() && !etS.getAddress().isEmpty() && etS.getDateOfBirth() != null) {
+                    	ikhachHang.updateCustomer(etS.getCustomerID(), etS.getFullName(), etS.getEmail(), etS.getPhoneNumber(), etS.getAddress(), etS.getDateOfBirth());
+                    } else {
+                    	System.out.println("Không được để trống!");
+                    }
                     break;
                 case 4:
                     System.out.println("Nhập KhachhangID:");
                     etS.setCustomerID(scanner.nextInt());
-                    scanner.nextLine(); // Consume newline
-                    ikhachHang.deleteCustomer(etS.getCustomerID());
+                    scanner.nextLine(); 
+                    if(etS.getCustomerID() != 0) ikhachHang.deleteCustomer(etS.getCustomerID());
+                    else {
+                    	System.out.println("Vui long nhap CustomerID");
+                    }
                     break;
                 case 5:
                     System.out.println("Quay lại menu chính.");
@@ -381,6 +409,7 @@ public class Main {
     }
     
     private static void QLNCC(Scanner scanner, iSuppliers isupplier) {
+    	EntitySupplier etS = new EntitySupplier();
         while (true) {
             System.out.println("Chọn mục quản lý Nhà Cung Cấp:");
             System.out.println("1. Xem nhà cung cấp");
@@ -397,35 +426,40 @@ public class Main {
                     break;
                 case 2:
 					System.out.print("Nhập tên Nhà Cung Cấp: ");
-					String supplierName = scanner.nextLine();
-					
+					etS.setSupplierName(scanner.nextLine());
 					System.out.print("Nhập thông tin liên lạc: ");
-					String contactInfo = scanner.nextLine();
-					
+					etS.setContactInfo(scanner.nextLine());
 					System.out.print("Nhập địa chỉ: ");
-					String address = scanner.nextLine();
-					isupplier.addSupplier(supplierName, contactInfo, address);
+					etS.setAddress(scanner.nextLine());
+					if(!etS.getSupplierName().isEmpty() && !etS.getContactInfo().isEmpty() && !etS.getAddress().isEmpty()) {
+						isupplier.addSupplier(etS.getSupplierName(), etS.getContactInfo(), etS.getAddress());
+					}
+					else {
+						System.out.println("Vui lòng điền đầy đủ thông tin!");
+						System.out.println("---------------------------------");
+					}
                     break;
                 case 3:
 					System.out.print("Nhập SupplierID cần sửa: ");
-					int supplierID = scanner.nextInt();
-
+					etS.setSupplierID(scanner.nextInt());
+					scanner.nextLine();
 					System.out.print("Nhập tên Nhà Cung Cấp cần sửa: ");
-					supplierName = scanner.nextLine();
-					scanner.nextLine();
-					
+					etS.setSupplierName(scanner.nextLine());
 					System.out.print("Nhập thông tin liên lạc cần sửa: ");
-					contactInfo = scanner.nextLine();
-					scanner.nextLine();
-					
+					etS.setContactInfo(scanner.nextLine());
 					System.out.print("Nhập địa chỉ cần sửa: ");
-					address = scanner.nextLine();
-					isupplier.updateSupplier(supplierID, supplierName, contactInfo, address);
+					etS.setAddress(scanner.nextLine());
+					if(etS.getSupplierID() != 0 && !etS.getSupplierName().isEmpty() && !etS.getContactInfo().isEmpty() && !etS.getAddress().isEmpty()) {						
+						isupplier.updateSupplier(etS.getSupplierID(), etS.getSupplierName(), etS.getContactInfo(), etS.getAddress());
+					} else {
+						System.out.println("Vui lòng điền đầy đủ thông tin!");
+						System.out.println("---------------------------------");
+					}
 					break;
                 case 4:
                     System.out.print("Nhập SupplerID cần xóa: ");
-                    supplierID = scanner.nextInt();
-                    isupplier.deleteSupplier(supplierID);
+                    etS.setSupplierID(scanner.nextInt());
+                    isupplier.deleteSupplier(etS.getSupplierID());
                     break;
                 case 5:
                     System.out.println("Quay lại menu chính.");
@@ -477,5 +511,75 @@ public class Main {
              }
          }
     }
+    
+    private static void QLDH(Scanner scanner, iOrder iorder) {
+    	EntityOrder etD = new EntityOrder();
+        while (true) {
+            System.out.println("Chọn mục quản lý Đơn hàng:");
+            System.out.println("1. Xem đơn hàng");
+            System.out.println("2. Thêm đơn hàng");
+            System.out.println("3. Sửa đơn hàng");
+            System.out.println("4. Xóa đơn hàng");
+            System.out.println("5. Quay lại menu chính");
+
+            int subChoice = scanner.nextInt();
+
+            switch (subChoice) {
+                case 1:
+                    iorder.showOrder();
+                    break;
+                case 2:
+                    System.out.print("Nhập CustomerID: ");
+                    etD.setCustomerID(scanner.nextInt());
+                    System.out.print("Nhập Ngày đặt hàng (YYYY-MM-DD): ");
+                    etD.setOrderDate(scanner.next());
+                    System.out.print("Nhập Tổng số tiền: ");
+                    etD.setTotalAmount(scanner.nextDouble());
+                    System.out.print("Nhập Địa chỉ giao hàng: ");
+                    scanner.nextLine(); // Đọc ký tự newline còn lại
+                    etD.setShippingAddress(scanner.nextLine());
+					System.out.print("Nhập Trạng thái thanh toán: ");
+					etD.setPaymentStatus(scanner.nextLine());
+					if (etD.getCustomerID() != 0 && etD.getOrderDate() != null && etD.getTotalAmount() != 0
+							&& !etD.getShippingAddress().isEmpty() && !etD.getPaymentStatus().isEmpty()) {
+						iorder.addOrder(etD.getCustomerID(), etD.getOrderDate(), etD.getTotalAmount(),
+								etD.getShippingAddress(), etD.getPaymentStatus());
+					} else {
+						System.out.println("Vui lòng điền đầy đủ thông tin!");
+					}
+
+                    break;
+                case 3:
+                    System.out.print("Nhập OrderID cần sửa: ");
+                    etD.setOrderID(scanner.nextInt());
+                    System.out.print("Nhập CustomerID mới: ");
+                    etD.setCustomerID(scanner.nextInt());
+                    System.out.print("Nhập Ngày đặt hàng mới (YYYY-MM-DD): ");
+                    etD.setOrderDate(scanner.next());
+                    System.out.print("Nhập Tổng số tiền mới: ");
+                    etD.setTotalAmount(scanner.nextDouble());
+                    System.out.print("Nhập Địa chỉ giao hàng mới: ");
+                    scanner.nextLine(); // Đọc ký tự newline còn lại
+                    etD.setShippingAddress(scanner.nextLine());
+                    System.out.print("Nhập Trạng thái thanh toán mới: ");
+                    etD.setPaymentStatus(scanner.nextLine());
+                    iorder.updateOrder(etD.getOrderID(), etD.getCustomerID(), etD.getOrderDate(), etD.getTotalAmount(), etD.getShippingAddress(), etD.getPaymentStatus());
+                    break;
+                case 4:
+                    System.out.print("Nhập OrderID cần xóa: ");
+                    etD.setOrderID(scanner.nextInt());
+                    iorder.deleteOrder(etD.getOrderID());
+                    break;
+                case 5:
+                    System.out.println("Quay lại menu chính.");
+                    return;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
+            }
+        }
+    }
+
+    
+    
     
 }
