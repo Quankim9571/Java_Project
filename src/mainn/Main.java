@@ -26,6 +26,7 @@ import entity.DH;
 import entity.EntityCategories;
 import entity.EntityCustomers;
 import entity.EntityOrder;
+import entity.EntityPayments;
 import entity.EntitySupplier;
 import classs.Categories;
 public class Main {
@@ -94,6 +95,9 @@ public class Main {
                     	QLDH(scanner, iorder);
                         return;
                     case 9:
+                    	QLPTTT(scanner, ipayment);
+                        return;
+                    case 10:
                         System.out.println("Thoát chương trình.");
                         return;
                     default:
@@ -579,7 +583,69 @@ public class Main {
         }
     }
 
-    
+    private static void QLPTTT(Scanner scanner, iPayment ipayment) {
+    	EntityPayments etP = new EntityPayments();
+        while (true) {
+            System.out.println("Chọn mục quản lý Phương thức thanh toán:");
+            System.out.println("1. Xem phương thức thanh toán");
+            System.out.println("2. Thêm phương thức thanh toán");
+            System.out.println("3. Sửa phương thức thanh toán");
+            System.out.println("4. Xóa phương thức thanh toán");
+            System.out.println("5. Quay lại menu chính");
+
+            int subChoice = scanner.nextInt();
+
+            switch (subChoice) {
+                case 1:
+                	ipayment.showPayment();;
+                    break;
+                 
+                case 2:
+                    System.out.print("Nhập OrderID: ");
+                    etP.setOrderID(scanner.nextInt());
+                    scanner.nextLine();
+                    System.out.print("Nhập phương thức thanh toán: ");
+                    etP.setPaymentMethod(scanner.nextLine());
+                    
+                    System.out.print("Nhập ngày thanh toán (yy-mm-dd): ");
+                    etP.setPaymentDate(scanner.next());
+                    
+					if (etP.getOrderID() != 0 && !etP.getPaymentMethod().isEmpty() && !etP.getPaymentDate().isEmpty()) {
+						ipayment.addPayment(etP.getPaymentID(), etP.getOrderID(), etP.getPaymentMethod(), etP.getPaymentDate());
+					} else {
+						System.out.println("Vui lòng điền đầy đủ thông tin!");
+					}
+
+                    break;
+                
+                case 3:
+                    System.out.print("Nhập PaymentID cần sửa: ");
+                    etP.setOrderID(scanner.nextInt());
+                    System.out.print("Nhập OrderID mới: ");
+                    etP.setOrderID(scanner.nextInt());
+                    scanner.nextLine();
+                    System.out.print("Nhập Phương thức thanh toán mới: ");
+                    etP.setPaymentMethod(scanner.nextLine());
+                    System.out.print("Nhập Ngày thanh toán (YYYY-MM-DD): ");
+                    etP.setPaymentDate(scanner.next());
+                   
+                    ipayment.updatePayment(etP.getPaymentID(), etP.getOrderID(), etP.getPaymentMethod(), etP.getPaymentDate());
+                    break;
+                 /*
+                case 4:
+                    System.out.print("Nhập OrderID cần xóa: ");
+                    etD.setOrderID(scanner.nextInt());
+                    iorder.deleteOrder(etD.getOrderID());
+                    break;
+                case 5:
+                    System.out.println("Quay lại menu chính.");
+                    return; */
+                default:
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
+            }
+        }
+    }
+
     
     
 }
