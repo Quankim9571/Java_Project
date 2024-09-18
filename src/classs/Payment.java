@@ -1,7 +1,9 @@
 package classs;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import database.Data;
 import interfacee.iPayment;
@@ -14,12 +16,11 @@ public class Payment implements iPayment{
 	
 	@Override
 	public void addPayment(int PaymentID, int OrderID, String PaymentMethod, String PaymentDate) {
-		String sql = "INSERT INTO Payment (OrderID, PaymentMethod, PaymentDate) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO Payments (OrderID, PaymentMethod, PaymentDate) VALUES (?, ?, ?)";
         try (PreparedStatement ps = dataAccess.getConnection().prepareStatement(sql)) {
             ps.setInt(1, OrderID);
             ps.setString(2, PaymentMethod);
             ps.setString(3, PaymentDate);
-            ps.setInt(5, PaymentID);
             ps.executeUpdate();
             System.out.println("Successfully added Orders!");
         } catch (SQLException e) {
@@ -30,8 +31,17 @@ public class Payment implements iPayment{
 
 	@Override
 	public void updatePayment(int PaymentID, int OrderID, String PaymentMethod, String PaymentDate) {
-		// TODO Auto-generated method stub
-		
+		String sql = "UPDATE Payments SET OrderID = ?, PaymentMethod = ?, PaymentDate = ? WHERE PaymentID = ?";
+        try (PreparedStatement ps = dataAccess.getConnection().prepareStatement(sql)) {
+        	ps.setInt(1, OrderID);  
+        	ps.setString(2, PaymentMethod);      
+        	ps.setString(3, PaymentDate);
+        	ps.setInt(4, PaymentID);   
+            ps.executeUpdate();
+            System.out.println("Successfully updated Order!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
@@ -42,7 +52,21 @@ public class Payment implements iPayment{
 
 	@Override
 	public void showPayment() {
-		// TODO Auto-generated method stub
+		String sql = "SELECT * FROM Payments";
+        System.out.printf("| %-10s | %-20s | %-30s | %-15s |%n", "PaymentID", "OrderID", "PaymentMethod", "PaymentDate");
+        System.out.println("|------------|----------------------|-----------------|------------------------------|");
+        try (Statement stmt = dataAccess.getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int PaymentID = rs.getInt("PaymentID");
+                int OrderID = rs.getInt("OrderID");
+                String PaymentMethod = rs.getString("PaymentMethod");
+                String PaymentDate = rs.getString("PaymentDate");
+                System.out.printf("| %-10s | %-20s | %-30s | %-15s |%n", PaymentID, OrderID, PaymentMethod, PaymentDate);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 		
 	}
 
